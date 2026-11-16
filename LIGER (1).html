@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ROMAN PAK SIM DATABASES</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    background:#07060d;
+    color:#fff;
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ===== ANIMATED BG ===== */
+  .bg-glow{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+  .bg-glow::before,.bg-glow::after{
+    content:"";position:absolute;width:70vw;height:70vw;border-radius:50%;
+    filter:blur(120px);opacity:.35;
+  }
+  .bg-glow::before{
+    background:radial-gradient(circle,#f7b733 0%,transparent 70%);
+    top:-30%;left:-20%;
+    animation:float1 18s ease-in-out infinite;
+  }
+  .bg-glow::after{
+    background:radial-gradient(circle,#fc4a1a 0%,transparent 70%);
+    bottom:-30%;right:-20%;
+    animation:float2 20s ease-in-out infinite;
+  }
+  @keyframes float1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(10%,15%) scale(1.2);}}
+  @keyframes float2{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-15%,-10%) scale(1.15);}}
+
+  .grid-bg{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(247,183,51,0.03) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(247,183,51,0.03) 1px,transparent 1px);
+    background-size:40px 40px;
+    mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
+    -webkit-mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar{
+    position:sticky;top:0;z-index:100;
+    background:rgba(7,6,13,0.75);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(247,183,51,0.12);
+    padding:12px 16px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .menu-btn{
+    width:42px;height:42px;border-radius:12px;
+    background:linear-gradient(135deg,rgba(247,183,51,0.15),rgba(252,74,26,0.08));
+    border:1px solid rgba(247,183,51,0.3);
+    color:#f7b733;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;flex-shrink:0;transition:.2s;position:relative;
+  }
+  .menu-btn:active{transform:scale(0.92);}
+  .menu-btn svg{width:20px;height:20px;}
+  .menu-btn::after{
+    content:"";position:absolute;top:-2px;right:-2px;
+    width:8px;height:8px;border-radius:50%;
+    background:#25D366;box-shadow:0 0 8px #25D366;
+    animation:blink 1.5s infinite;
+  }
+  @keyframes blink{50%{opacity:0.4;}}
+
+  .brand-mini{
+    flex:1;text-align:center;font-size:0.95rem;font-weight:900;letter-spacing:1px;
+    background:linear-gradient(90deg,#f7b733,#fc4a1a,#f7b733);
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shine 4s linear infinite;line-height:1.2;
+  }
+  @keyframes shine{to{background-position:200% center;}}
+
+  .live-pill{
+    display:flex;align-items:center;gap:5px;
+    background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.4);
+    border-radius:20px;padding:5px 10px;
+    font-size:0.6rem;font-weight:800;color:#00e676;
+    letter-spacing:1px;flex-shrink:0;
+  }
+  .live-pill .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:#00e676;box-shadow:0 0 8px #00e676;
+    animation:blink 1s infinite;
+  }
+
+  /* ===== WRAP ===== */
+  .wrap{
+    position:relative;z-index:5;max-width:720px;margin:0 auto;
+    padding:18px 16px 40px;
+  }
+
+  /* ===== HERO ===== */
+  .hero{text-align:center;margin-bottom:20px;}
+  .owner-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:linear-gradient(90deg,#f7b733,#fc4a1a);
+    color:#000;font-size:0.6rem;font-weight:900;
+    padding:5px 14px;border-radius:20px;
+    letter-spacing:2px;margin-bottom:14px;
+    box-shadow:0 4px 20px rgba(247,183,51,0.4);
+  }
+  h1{
+    font-size:1.5rem;font-weight:900;letter-spacing:1.5px;
+    line-height:1.15;margin-bottom:8px;
+    background:linear-gradient(135deg,#fff 0%,#f7b733 50%,#fc4a1a 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 20px rgba(247,183,51,0.3));
+  }
+  .hero-sub{font-size:0.65rem;color:#6a7a8a;letter-spacing:2px;font-weight:600;}
+
+  /* ===== GLASS CARD ===== */
+  .glass{
+    background:linear-gradient(160deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));
+    backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.08);border-radius:18px;
+    position:relative;overflow:hidden;
+  }
+  .glass::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(247,183,51,0.5),transparent);
+  }
+
+  /* ===== SEARCH CARD ===== */
+  .search-card{
+    padding:20px;margin-bottom:14px;
+    background:linear-gradient(160deg,rgba(247,183,51,0.12),rgba(252,74,26,0.04));
+    border:1.5px solid rgba(247,183,51,0.3);
+  }
+  .input-row{display:flex;gap:10px;}
+  #number{
+    flex:1;min-width:0;height:56px;border-radius:14px;
+    border:1px solid rgba(247,183,51,0.3);background:rgba(0,0,0,0.5);
+    padding:0 18px;font-size:16px;font-weight:700;color:#fff;
+    outline:none;transition:.2s;font-family:inherit;letter-spacing:1px;
+  }
+  #number::placeholder{color:#6a7a8a;font-weight:500;}
+  #number:focus{border-color:#f7b733;box-shadow:0 0 15px rgba(247,183,51,0.3);background:rgba(0,0,0,0.7);}
+  #go{
+    border:0;cursor:pointer;height:56px;padding:0 24px;border-radius:14px;
+    font-size:15px;font-weight:900;letter-spacing:0.5px;color:#000;
+    background:linear-gradient(135deg,#f7b733,#fc4a1a);
+    box-shadow:0 12px 24px rgba(247,183,51,0.3), inset 0 1px 0 rgba(255,255,255,0.35);
+    transition:transform .18s, box-shadow .18s;font-family:inherit;
+    white-space:nowrap;display:inline-flex;align-items:center;gap:8px;
+  }
+  #go:hover{transform:translateY(-1px);box-shadow:0 16px 30px rgba(247,183,51,0.4);}
+  #go:active{transform:scale(.97);}
+  #go:disabled{cursor:not-allowed;opacity:0.7;}
+  #go svg{width:16px;height:16px;}
+  .hint{margin:13px 2px 0;font-size:12.5px;color:#9aa7b8;line-height:1.55;}
+  .hint b{color:#f7b733;}
+
+  /* ===== HISTORY ===== */
+  .history{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:0 6px 0 2px;margin:-2px 0 16px;}
+  .hist-lbl{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#6a7a8a;}
+  .hist-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+  .hist-chip{
+    border:1px solid rgba(247,183,51,0.3);background:rgba(247,183,51,0.1);color:#f7b733;
+    cursor:pointer;padding:5px 11px;border-radius:99px;
+    font-size:11.5px;font-weight:800;font-family:inherit;transition:.2s;
+  }
+  .hist-chip:hover{background:rgba(247,183,51,0.2);transform:translateY(-1px);}
+  .hist-clear{
+    border:0;background:transparent;cursor:pointer;color:#6a7a8a;
+    font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+    padding:4px 8px;border-radius:8px;font-family:inherit;
+  }
+  .hist-clear:hover{color:#ff5252;}
+
+  /* ===== STATS BAR ===== */
+  .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+  .stat{
+    display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(8px);min-width:0;
+  }
+  .stat-ic{
+    width:36px;height:36px;flex:0 0 36px;border-radius:10px;
+    display:grid;place-items:center;
+    background:linear-gradient(135deg,rgba(247,183,51,0.2),rgba(252,74,26,0.1));
+    color:#f7b733;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .stat-ic svg{width:17px;height:17px;}
+  .stat-v{font-size:18px;font-weight:900;color:#fff;line-height:1.1;}
+  .stat-l{font-size:9.5px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#6a7a8a;margin-top:2px;}
+
+  /* ===== RESULT HEAD ===== */
+  .res-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 8px 14px;margin-bottom:6px;flex-wrap:wrap;}
+  .res-count{font-size:11.5px;font-weight:900;letter-spacing:1.8px;text-transform:uppercase;color:#f7b733;}
+  .res-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .mini-btn{
+    border:1px solid rgba(247,183,51,0.3);background:rgba(247,183,51,0.1);color:#f7b733;
+    cursor:pointer;padding:8px 14px;border-radius:10px;
+    font-size:11.5px;font-weight:800;letter-spacing:.6px;font-family:inherit;
+    transition:.2s;display:inline-flex;align-items:center;gap:6px;
+  }
+  .mini-btn svg{width:13px;height:13px;}
+  .mini-btn:hover{background:rgba(247,183,51,0.2);transform:translateY(-1px);}
+  .mini-btn:active{transform:scale(.96);}
+  .mini-btn.primary{background:linear-gradient(135deg,#f7b733,#fc4a1a);color:#000;border-color:transparent;}
+
+  /* ===== RECORD CARD ===== */
+  .record{position:relative;overflow:hidden;margin-bottom:14px;padding:20px;}
+  .record::after{
+    content:"";position:absolute;top:-40%;right:-30%;
+    width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle,rgba(247,183,51,0.08),transparent 70%);
+    pointer-events:none;
+  }
+  .rec-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;}
+  .rec-idx{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:1.6px;color:#6a7a8a;text-transform:uppercase;}
+  .rec-idx b{color:#f7b733;font-size:11.5px;letter-spacing:.6px;}
+  .rec-idx .dot{width:7px;height:7px;border-radius:50%;background:#f7b733;box-shadow:0 0 0 3px rgba(247,183,51,0.2);}
+  .rec-actions{display:flex;gap:6px;position:relative;z-index:1;}
+  .icon-btn{
+    border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#9aa7b8;
+    cursor:pointer;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;transition:.2s;
+  }
+  .icon-btn:hover{background:rgba(247,183,51,0.2);color:#f7b733;border-color:rgba(247,183,51,0.3);transform:translateY(-1px);}
+  .icon-btn:active{transform:scale(.94);}
+  .icon-btn svg{width:14px;height:14px;}
+
+  .hero-top{display:flex;gap:16px;align-items:flex-start;}
+  .avatar{
+    width:66px;height:66px;flex:0 0 66px;border-radius:18px;overflow:hidden;
+    display:grid;place-items:center;color:#fff;
+    background:linear-gradient(135deg,#f7b733,#fc4a1a);
+    box-shadow:0 12px 24px rgba(247,183,51,0.2);position:relative;z-index:1;
+  }
+  .avatar svg{width:32px;height:32px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.95;}
+  .hero-info{min-width:0;flex:1;position:relative;z-index:1;}
+  .hero-name{font-size:18px;font-weight:900;line-height:1.3;word-break:break-word;color:#fff;}
+  .hero-num{
+    display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+    font-size:13.5px;font-weight:900;color:#f7b733;background:rgba(247,183,51,0.12);
+    padding:7px 12px;border-radius:10px;cursor:pointer;
+    border:1px solid rgba(247,183,51,0.2);transition:.2s;letter-spacing:.4px;
+  }
+  .hero-num svg{width:11px;height:11px;opacity:.7;}
+  .hero-num:hover{background:rgba(247,183,51,0.2);transform:translateY(-1px);}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
+    padding:5px 11px;border-radius:8px;border:1px solid transparent;
+  }
+  .chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.85;}
+
+  .rec-divider{margin:16px 0 14px;border:0;border-top:1px dashed rgba(255,255,255,0.1);}
+  .details{display:grid;gap:9px;}
+  .row{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+    padding:12px 15px;border-radius:12px;
+    background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  }
+  .row .k{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:11px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;
+    color:#6a7a8a;flex:0 0 auto;padding-top:3px;
+  }
+  .row .k svg{width:13px;height:13px;opacity:.75;}
+  .row .v{font-size:14px;font-weight:700;text-align:right;word-break:break-word;line-height:1.45;color:#fff;}
+
+  /* ===== MESSAGES ===== */
+  .msg{display:flex;gap:14px;align-items:center;font-size:14px;font-weight:700;line-height:1.5;padding:20px;}
+  .msg-ico{
+    width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:grid;place-items:center;
+    font-weight:900;font-size:16px;background:rgba(0,230,118,0.15);color:#00e676;
+  }
+  .msg.err{border-color:rgba(255,82,82,0.4);background:rgba(255,82,82,0.05);}
+  .msg.err .msg-ico{background:rgba(255,82,82,0.15);color:#ff5252;}
+  .loader{display:flex;align-items:center;gap:13px;font-size:14px;font-weight:800;color:#9aa7b8;padding:20px;}
+  .spin{width:20px;height:20px;border-radius:50%;flex:0 0 20px;border:3px solid rgba(255,255,255,0.1);border-top-color:#f7b733;animation:sp .7s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* ===== EMPTY ===== */
+  .empty{text-align:center;padding:36px 24px;}
+  .empty-svg{width:96px;height:96px;margin:0 auto 16px;display:block;opacity:.85;}
+  .empty-title{font-size:15px;font-weight:900;color:#fff;margin:0 0 6px;}
+  .empty-sub{font-size:12.5px;color:#6a7a8a;font-weight:600;margin:0;line-height:1.55;}
+
+  .foot{text-align:center;font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:#4a5568;font-weight:800;margin-top:24px;}
+
+  .fade{animation:fade .42s cubic-bezier(.2,.8,.2,1) both;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  /* ===== SIDE MENU ===== */
+  .menu-bg{position:fixed;inset:0;z-index:199;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity 0.3s;}
+  .menu-bg.show{opacity:1;pointer-events:auto;}
+  .side-menu{
+    position:fixed;top:0;left:0;width:80%;max-width:320px;height:100vh;
+    background:linear-gradient(160deg,#0f0c1a,#07060d);border-right:1px solid rgba(247,183,51,0.2);
+    z-index:200;transform:translateX(-100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    display:flex;flex-direction:column;box-shadow:4px 0 40px rgba(0,0,0,0.6);
+  }
+  .side-menu.show{transform:translateX(0);}
+  .menu-head{padding:24px 22px 20px;border-bottom:1px solid rgba(247,183,51,0.15);background:linear-gradient(160deg,rgba(247,183,51,0.08),transparent);position:relative;}
+  .menu-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.05);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;}
+  .menu-logo{font-size:1.1rem;font-weight:900;background:linear-gradient(90deg,#f7b733,#fc4a1a);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:1px;line-height:1.2;margin-bottom:4px;}
+  .menu-tag{font-size:0.58rem;color:#6a7a8a;letter-spacing:2px;font-weight:700;}
+  .menu-owner{display:inline-block;margin-top:10px;background:linear-gradient(90deg,#f7b733,#fc4a1a);color:#000;font-size:0.55rem;font-weight:900;padding:3px 10px;border-radius:10px;letter-spacing:1.5px;}
+  .menu-items{flex:1;padding:14px 12px;overflow-y:auto;}
+  .menu-link{display:flex;align-items:center;gap:12px;padding:14px 12px;border-radius:12px;text-decoration:none;color:#fff;margin-bottom:6px;transition:0.2s;border:1px solid transparent;}
+  .menu-link:active{background:rgba(247,183,51,0.1);border-color:rgba(247,183,51,0.3);}
+  .menu-link.highlight{background:linear-gradient(135deg,rgba(37,211,102,0.15),rgba(37,211,102,0.05));border:1.5px solid rgba(37,211,102,0.5);position:relative;}
+  .menu-link.highlight::after{content:"LIVE";position:absolute;top:8px;right:10px;font-size:0.45rem;font-weight:900;letter-spacing:1px;background:#25D366;color:#000;padding:2px 6px;border-radius:6px;}
+  .menu-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;background:linear-gradient(135deg,rgba(247,183,51,0.2),rgba(252,74,26,0.1));border:1px solid rgba(247,183,51,0.25);}
+  .menu-link.highlight .menu-icon{background:#25D366;border-color:#25D366;color:#000;}
+  .menu-text .ttl{font-size:0.82rem;font-weight:800;letter-spacing:0.5px;}
+  .menu-text .sub{font-size:0.62rem;color:#6a7a8a;margin-top:2px;}
+  .menu-foot{padding:16px;border-top:1px solid rgba(247,183,51,0.15);text-align:center;font-size:0.6rem;color:#5a6a7a;line-height:1.7;}
+  .menu-foot b{color:#f7b733;}
+
+  @media (max-width:520px){.stats-bar{grid-template-columns:1fr 1fr;}.stat:nth-child(3){grid-column:1 / -1;}}
+  @media (max-width:440px){
+    .search-card{padding:16px;}
+    #go{padding:0 18px;font-size:14px;}
+    h1{font-size:1.2rem;letter-spacing:1px;}
+    .hero-name{font-size:16.5px;}
+    .avatar{width:58px;height:58px;flex:0 0 58px;border-radius:14px;}
+    .avatar svg{width:28px;height:28px;}
+    .res-head{padding:10px 4px 12px;}
+    .mini-btn{padding:7px 11px;font-size:10.5px;}
+    .mini-btn span{display:none;}
+    .mini-btn svg{width:15px;height:15px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="grid-bg"></div>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+  <div class="brand-mini">ROMAN PAK SIM DB</div>
+  <div class="live-pill"><span class="dot"></span>LIVE</div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="wrap">
+
+  <div class="hero">
+    <div class="owner-badge">👑 OWNER: ROMAN</div>
+    <h1>ROMAN PAK SIM DATABASES</h1>
+    <div class="hero-sub">ADVANCED SIM LOOKUP ENGINE</div>
+  </div>
+
+  <!-- SEARCH CARD -->
+  <div class="glass search-card">
+    <div class="input-row">
+      <input id="number" type="tel" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="03001234567" />
+      <button id="go" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>
+        </svg>
+        Search
+      </button>
+    </div>
+    <p class="hint">Enter the number with or without country code — e.g. <b>03001234567</b></p>
+  </div>
+
+  <div id="history"></div>
+  <section id="result"></section>
+
+  <footer class="foot">ROMAN PAK SIM DATABASES</footer>
+</div>
+
+<!-- ===== SIDE MENU ===== -->
+<div class="menu-bg" id="menuBg"></div>
+<div class="side-menu" id="sideMenu">
+  <div class="menu-head">
+    <button class="menu-close" id="menuClose">✕</button>
+    <div class="menu-logo">ROMAN PAK SIM DB</div>
+    <div class="menu-tag">SIM LOOKUP ENGINE</div>
+    <div class="menu-owner">👑 OWNER: ROMAN</div>
+  </div>
+
+  <div class="menu-items">
+    <a href="https://whatsapp.com/channel/0029VawwXaeEquiIR1CLXA30" target="_blank" class="menu-link highlight">
+      <div class="menu-icon">📢</div>
+      <div class="menu-text">
+        <div class="ttl">WhatsApp Channel</div>
+        <div class="sub">Join for updates</div>
+      </div>
+    </a>
+
+    <a href="https://wa.me/923037224620" target="_blank" class="menu-link">
+      <div class="menu-icon">💬</div>
+      <div class="menu-text">
+        <div class="ttl">Developer Contact</div>
+        <div class="sub">+92 303 7224620</div>
+      </div>
+    </a>
+
+    <a href="#" class="menu-link" onclick="closeMenu();document.getElementById('number').focus();return false;">
+      <div class="menu-icon">🔍</div>
+      <div class="menu-text">
+        <div class="ttl">New Search</div>
+        <div class="sub">Look up a number</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="menu-foot">
+    ⚠️ For Educational Purposes Only<br>
+    Play Responsibly • Not 100% Guaranteed
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   1. BRAND LOGO & SIM FLOATERS
+   ============================================================ */
+function tcSVG(size, color) {
+  color = color || "#0087FF";
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+           '<rect width="100" height="100" rx="27" fill="' + color + '"/>' +
+           '<g transform="translate(50,50) scale(2.55) translate(-12,-12) rotate(-6)">' +
+             '<path fill="#ffffff" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>' +
+           '</g>' +
+         '</svg>';
+}
+
+var USER_SVG = '<svg viewBox="0 0 24 24">' +
+  '<circle cx="12" cy="8.5" r="4"/>' +
+  '<path d="M4.5 20.5c0-4.14 3.36-7.5 7.5-7.5s7.5 3.36 7.5 7.5"/>' +
+'</svg>';
+
+/* ============================================================
+   2. HELPERS
+   ============================================================ */
+function esc(v) {
+  return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) {
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+function msgCard(text, isErr) {
+  return '<div class="glass msg fade' + (isErr ? " err" : "") + '">' +
+           '<div class="msg-ico">' + (isErr ? "!" : "✓") + "</div>" +
+           "<div>" + esc(text) + "</div>" +
+         "</div>";
+}
+function loadingCard() {
+  return '<div class="glass fade"><div class="loader">' +
+           '<div class="spin"></div><span>Fetching SIM records…</span>' +
+         "</div></div>";
+}
+function emptyState() {
+  return '<div class="glass fade empty">' +
+    '<svg class="empty-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+      '<circle cx="60" cy="60" r="50" fill="rgba(247,183,51,0.1)" stroke="rgba(247,183,51,0.3)" stroke-width="1.5"/>' +
+      '<rect x="38" y="42" width="44" height="46" rx="6" fill="rgba(0,0,0,0.5)" stroke="#f7b733" stroke-width="2"/>' +
+      '<path d="M46 54h28M46 62h28M46 70h18" stroke="rgba(247,183,51,0.5)" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<circle cx="82" cy="82" r="16" fill="#fc4a1a"/>' +
+      '<path d="M75 82l5 5 9-10" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>' +
+    '<div class="empty-title">No records found</div>' +
+    '<div class="empty-sub">Try a different number or double-check the format.</div>' +
+  '</div>';
+}
+function copyText(txt, done) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(done).catch(function () { legacyCopy(txt, done); });
+  } else legacyCopy(txt, done);
+}
+function legacyCopy(txt, done) {
+  try {
+    var ta = document.createElement("textarea");
+    ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); document.body.removeChild(ta);
+    if (done) done();
+  } catch (e) {}
+}
+
+/* ============================================================
+   3. NETWORK STYLES
+   ============================================================ */
+var NET_MAP = {
+  jazz:    { bg:"rgba(230,57,70,0.15)", fg:"#ff5252", dot:"#E63946" },
+  ufone:   { bg:"rgba(247,127,0,0.15)", fg:"#ff9800", dot:"#F77F00" },
+  zong:    { bg:"rgba(157,78,221,0.15)", fg:"#b388ff", dot:"#9D4EDD" },
+  telenor: { bg:"rgba(0,119,182,0.15)", fg:"#4fc3f7", dot:"#0077B6" },
+  scom:    { bg:"rgba(42,157,143,0.15)", fg:"#00e676", dot:"#2A9D8F" },
+  warid:   { bg:"rgba(255,183,3,0.15)", fg:"#f7b733", dot:"#FFB703" }
+};
+function netStyle(net) {
+  var k = String(net || "").toLowerCase().replace(/[^a-z]/g, "");
+  return NET_MAP[k] || { bg:"rgba(247,183,51,0.15)", fg:"#f7b733", dot:"#f7b733" };
+}
+function netChipHTML(net) {
+  var s = netStyle(net);
+  return '<span class="chip" style="background:' + s.bg + ';color:' + s.fg + ';border-color:' + s.bg + '">' +
+         '<span class="dot" style="background:' + s.dot + '"></span>' +
+         esc(net || "—") + "</span>";
+}
+
+/* ============================================================
+   4. RECORD NORMALISER
+   ============================================================ */
+function pickField(obj, keys) {
+  for (var i = 0; i < keys.length; i++) {
+    if (Object.prototype.hasOwnProperty.call(obj, keys[i])) {
+      var v = obj[keys[i]];
+      if (v === null || v === undefined) continue;
+      var s = String(v).trim();
+      if (!s || s.toUpperCase() === "NULL") continue;
+      return s;
+    }
+  }
+  return "";
+}
+function normalise(raw) {
+  var src = [];
+  if (!raw) return [];
+  if (Array.isArray(raw)) src = raw;
+  else if (Array.isArray(raw.records)) src = raw.records;
+  else if (Array.isArray(raw.data)) src = raw.data;
+  else if (typeof raw === "object") src = [raw];
+
+  var seen = {}, out = [];
+  src.forEach(function (item) {
+    if (!item || typeof item !== "object") return;
+    var r = {
+      name:    pickField(item, ["name", "fullname", "full_name", "subscriber", "owner"]),
+      mobile:  pickField(item, ["mobile", "number", "phone", "msisdn", "cell"]),
+      cnic:    pickField(item, ["cnic", "nic", "id_card", "identity"]),
+      address: pickField(item, ["address", "addr", "location", "city"]),
+      network: pickField(item, ["network", "carrier", "operator", "sim"])
+    };
+    if (!r.name && !r.mobile && !r.cnic && !r.address && !r.network) return;
+    var sig = (r.name + "|" + r.mobile + "|" + r.cnic + "|" + r.address + "|" + r.network).toLowerCase();
+    if (seen[sig]) return;
+    seen[sig] = 1;
+    out.push(r);
+  });
+  return out;
+}
+
+/* ============================================================
+   5. STATS BAR
+   ============================================================ */
+function computeStats(records) {
+  var nets = {}, cnics = {};
+  records.forEach(function (r) {
+    if (r.network) nets[r.network.toLowerCase()] = 1;
+    if (r.cnic) cnics[r.cnic] = 1;
+  });
+  return { total: records.length, networks: Object.keys(nets).length, cnics: Object.keys(cnics).length };
+}
+function statsBarHTML(stats) {
+  return '<div class="stats-bar fade">' +
+    '<div class="stat">' +
+      '<div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg></div>' +
+      '<div class="stat-body"><div class="stat-v">' + stats.total + '</div><div class="stat-l">Records</div></div>' +
+    '</div>' +
+    '<div class="stat">' +
+      '<div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5a9 9 0 0 1 0-9M2 20a13 13 0 0 1 0-16M19.5 7.5a9 9 0 0 1 0 9M22 4a13 13 0 0 1 0 16"/><circle cx="12" cy="12" r="2.5"/></svg></div>' +
+      '<div class="stat-body"><div class="stat-v">' + stats.networks + '</div><div class="stat-l">Networks</div></div>' +
+    '</div>' +
+    '<div class="stat">' +
+      '<div class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M14 10h4M14 14h4M6 15.5c.5-1 2-1.5 2-1.5"/></svg></div>' +
+      '<div class="stat-body"><div class="stat-v">' + stats.cnics + '</div><div class="stat-l">CNICs</div></div>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ============================================================
+   6. ICONS
+   ============================================================ */
+var ICONS = {
+  cnic:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M14 10h4M14 14h4M6 15.5c.5-1 2-1.5 2-1.5"/></svg>',
+  address:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  phone:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.5a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.8.4 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>',
+  copy:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+  json:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/></svg>',
+  png:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
+  copy2:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>'
+};
+
+/* ============================================================
+   7. RENDER RESULT
+   ============================================================ */
+var lastRecords = [];
+var lastNumber = "";
+
+function recordCardHTML(r, i) {
+  var name = esc(r.name || "Unknown");
+  var mobile = esc(r.mobile || "—");
+  var cnic = esc(r.cnic || "—");
+  var address = esc(r.address || "—");
+
+  return '<div class="glass fade record">' +
+    '<div class="rec-top">' +
+      '<div class="rec-idx"><span class="dot"></span>Record <b>#' + (i + 1) + '</b></div>' +
+      '<div class="rec-actions">' +
+        '<button class="icon-btn" data-copyrec="' + i + '" title="Copy record">' + ICONS.copy2 + '</button>' +
+        '<button class="icon-btn" data-saverec="' + i + '" title="Save PNG">' + ICONS.png + '</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="hero-top">' +
+      '<div class="avatar">' + USER_SVG + '</div>' +
+      '<div class="hero-info">' +
+        '<div class="hero-name">' + name + '</div>' +
+        '<div class="hero-num" data-copy="' + mobile + '" title="Click to copy">' +
+          ICONS.phone + mobile +
+        '</div>' +
+        '<div class="chips">' + netChipHTML(r.network) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<hr class="rec-divider" />' +
+    '<div class="details">' +
+      '<div class="row"><span class="k">' + ICONS.cnic + 'CNIC</span><span class="v">' + cnic + '</span></div>' +
+      '<div class="row"><span class="k">' + ICONS.address + 'Address</span><span class="v">' + address + '</span></div>' +
+    '</div>' +
+  '</div>';
+}
+
+function render(records, number) {
+  lastRecords = records;
+  lastNumber = number;
+
+  if (!records.length) return emptyState();
+
+  var stats = computeStats(records);
+
+  var head =
+    '<div class="res-head fade">' +
+      '<div class="res-count">' + records.length + " Record" + (records.length > 1 ? "s" : "") + " Found</div>" +
+      '<div class="res-actions">' +
+        '<button class="mini-btn" data-copyall>' + ICONS.copy + '<span>Copy All</span></button>' +
+        '<button class="mini-btn" data-copyjson>' + ICONS.json + '<span>JSON</span></button>' +
+        '<button class="mini-btn primary" data-savepng>' + ICONS.png + '<span>Save PNG</span></button>' +
+      "</div>" +
+    "</div>";
+
+  return head + statsBarHTML(stats) + records.map(recordCardHTML).join("");
+}
+
+/* ============================================================
+   8. HISTORY
+   ============================================================ */
+var History = {
+  KEY: "roman_history_v3",
+  MAX: 6,
+  get: function () {
+    try {
+      var raw = localStorage.getItem(this.KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  },
+  add: function (n) {
+    if (!n) return;
+    var arr = this.get().filter(function (x) { return x !== n; });
+    arr.unshift(n);
+    arr = arr.slice(0, this.MAX);
+    try { localStorage.setItem(this.KEY, JSON.stringify(arr)); } catch (e) {}
+  },
+  clear: function () {
+    try { localStorage.removeItem(this.KEY); } catch (e) {}
+  }
+};
+
+function renderHistory() {
+  var el = document.getElementById("history");
+  var h = History.get();
+  if (!h.length) { el.innerHTML = ""; return; }
+  el.innerHTML =
+    '<div class="history fade">' +
+      '<span class="hist-lbl">Recent</span>' +
+      '<div class="hist-chips">' +
+        h.map(function (n) {
+          return '<button class="hist-chip" data-hist="' + esc(n) + '">' + esc(n) + '</button>';
+        }).join("") +
+      '</div>' +
+      '<button class="hist-clear" data-histclear>Clear</button>' +
+    '</div>';
+}
+
+document.getElementById("history").addEventListener("click", function (e) {
+  var chip = e.target.closest("[data-hist]");
+  if (chip) {
+    document.getElementById("number").value = chip.getAttribute("data-hist");
+    lookup();
+    return;
+  }
+  if (e.target.closest("[data-histclear]")) {
+    History.clear();
+    renderHistory();
+  }
+});
+
+/* ============================================================
+   9. COPY / SAVE HANDLERS
+   ============================================================ */
+function recordsToText(records, number) {
+  var lines = [];
+  lines.push("ROMAN PAK SIM DATABASES");
+  lines.push("Number: " + number);
+  lines.push("Total Records: " + records.length);
+  lines.push("");
+  records.forEach(function (r, i) {
+    lines.push("#" + (i + 1) + " — " + (r.name || "Unknown"));
+    lines.push("Mobile : " + (r.mobile || "—"));
+    lines.push("CNIC   : " + (r.cnic || "—"));
+    lines.push("Address: " + (r.address || "—"));
+    lines.push("Network: " + (r.network || "—"));
+    lines.push("");
+  });
+  lines.push("— ROMAN PAK SIM DATABASES —");
+  return lines.join("\n");
+}
+
+document.getElementById("result").addEventListener("click", function (e) {
+  var t = e.target;
+  if (!t || !t.closest) return;
+
+  var copyAllBtn = t.closest("[data-copyall]");
+  if (copyAllBtn) {
+    if (!lastRecords.length) return;
+    copyText(recordsToText(lastRecords, lastNumber), function () {
+      var old = copyAllBtn.innerHTML;
+      copyAllBtn.innerHTML = "✓ Copied";
+      setTimeout(function () { copyAllBtn.innerHTML = old; }, 1300);
+    });
+    return;
+  }
+
+  var jsonBtn = t.closest("[data-copyjson]");
+  if (jsonBtn) {
+    if (!lastRecords.length) return;
+    var payload = {
+      success: true,
+      count: lastRecords.length,
+      number: lastNumber,
+      records: lastRecords,
+      developer: "ROMAN"
+    };
+    copyText(JSON.stringify(payload, null, 2), function () {
+      var old = jsonBtn.innerHTML;
+      jsonBtn.innerHTML = "✓ Copied";
+      setTimeout(function () { jsonBtn.innerHTML = old; }, 1300);
+    });
+    return;
+  }
+
+  var pngBtn = t.closest("[data-savepng]");
+  if (pngBtn) {
+    if (!lastRecords.length) return;
+    generatePNG(lastRecords, lastNumber);
+    return;
+  }
+
+  var copyRecBtn = t.closest("[data-copyrec]");
+  if (copyRecBtn) {
+    var i = parseInt(copyRecBtn.getAttribute("data-copyrec"), 10);
+    if (isNaN(i) || !lastRecords[i]) return;
+    var r = lastRecords[i];
+    var txt = "#" + (i + 1) + " — " + (r.name || "Unknown") + "\n" +
+              "Mobile : " + (r.mobile || "—") + "\n" +
+              "CNIC   : " + (r.cnic || "—") + "\n" +
+              "Address: " + (r.address || "—") + "\n" +
+              "Network: " + (r.network || "—");
+    copyText(txt, function () {
+      copyRecBtn.innerHTML = "✓";
+      setTimeout(function () { copyRecBtn.innerHTML = ICONS.copy2; }, 1000);
+    });
+    return;
+  }
+
+  var saveRecBtn = t.closest("[data-saverec]");
+  if (saveRecBtn) {
+    var j = parseInt(saveRecBtn.getAttribute("data-saverec"), 10);
+    if (isNaN(j) || !lastRecords[j]) return;
+    generatePNG([lastRecords[j]], lastNumber, j + 1);
+    return;
+  }
+
+  var copyEl = t.closest("[data-copy]");
+  if (copyEl) {
+    var txt2 = copyEl.getAttribute("data-copy");
+    copyText(txt2, function () {
+      var old = copyEl.innerHTML;
+      copyEl.innerHTML = "✓ Copied";
+      setTimeout(function () { copyEl.innerHTML = old; }, 1200);
+    });
+  }
+});
+
+/* ============================================================
+   10. PNG GENERATOR
+   ============================================================ */
+function rr(ctx, x, y, w, h, r) {
+  if (w < 2*r) r = w/2;
+  if (h < 2*r) r = h/2;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function wrapText(ctx, text, maxW) {
+  var words = String(text || "").split(/\s+/);
+  var lines = [], cur = "";
+  for (var i = 0; i < words.length; i++) {
+    var test = cur ? cur + " " + words[i] : words[i];
+    if (ctx.measureText(test).width > maxW && cur) { lines.push(cur); cur = words[i]; }
+    else cur = test;
+  }
+  if (cur) lines.push(cur);
+  return lines.length ? lines : [""];
+}
+function layoutRecord(mctx, r, W, PAD, INNER) {
+  var cw = W - PAD * 2;
+  mctx.font = '900 18px "Segoe UI", Arial, sans-serif';
+  var nameLines = wrapText(mctx, r.name || "Unknown", cw - INNER * 2 - 64 - 16).slice(0, 2);
+  mctx.font = '700 14px "Segoe UI", Arial, sans-serif';
+  var addrLines = wrapText(mctx, r.address || "—", cw - INNER * 2 - 100);
+  var avatarBottom = INNER + 60;
+  var nameBottom = INNER + 20 + nameLines.length * 22 + 6 + 26;
+  var topBottom = Math.max(avatarBottom, nameBottom);
+  var dividerY = topBottom + 14;
+  var contentTop = dividerY + 18;
+  var cnicH = 18 + 19;
+  var addrH = 18 + addrLines.length * 19;
+  var contentBottom = contentTop + cnicH + 16 + addrH;
+  return { nameLines: nameLines, addrLines: addrLines, dividerY: dividerY,
+    contentTop: contentTop, totalH: contentBottom + INNER };
+}
+function drawRow(ctx, x, y, w, label, value) {
+  ctx.textAlign = "left";
+  ctx.font = '900 10.5px "Segoe UI", Arial, sans-serif';
+  ctx.fillStyle = "#6a7a8a";
+  ctx.fillText(label, x, y + 12);
+  ctx.font = '700 14px "Segoe UI", Arial, sans-serif';
+  var lines = wrapText(ctx, value, w - 100);
+  ctx.textAlign = "right";
+  ctx.fillStyle = "#ffffff";
+  lines.forEach(function (ln, i) { ctx.fillText(ln, x + w, y + 12 + i * 19); });
+  ctx.textAlign = "left";
+  return 18 + lines.length * 19;
+}
+function drawUserIcon(ctx, cx, cy, s) {
+  ctx.save();
+  ctx.strokeStyle = "#ffffff";
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  ctx.lineWidth = 1.8;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.arc(cx, cy - s * 0.22, s * 0.30, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy + s * 0.55, s * 0.55, Math.PI * 1.15, Math.PI * 1.85);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function generatePNG(records, number, singleIndex) {
+  var W = 780, PAD = 36, INNER = 24, SCALE = 2;
+  var m = document.createElement("canvas");
+  var mctx = m.getContext("2d");
+  var layouts = records.map(function (r) { return layoutRecord(mctx, r, W, PAD, INNER); });
+  var headerH = singleIndex ? 150 : 210;
+  var recordsH = layouts.reduce(function (a, l) { return a + l.totalH + 16; }, 0);
+  var footerH = 70;
+  var H = headerH + recordsH + footerH;
+
+  var c = document.createElement("canvas");
+  c.width = W * SCALE; c.height = H * SCALE;
+  var ctx = c.getContext("2d");
+  ctx.scale(SCALE, SCALE);
+
+  /* Dark background */
+  var bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, "#07060d"); bg.addColorStop(1, "#11111a");
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+  /* Glows */
+  var b1 = ctx.createRadialGradient(90, 20, 10, 90, 20, 320);
+  b1.addColorStop(0, "rgba(247,183,51,0.15)");
+  b1.addColorStop(1, "rgba(247,183,51,0)");
+  ctx.fillStyle = b1; ctx.fillRect(0, 0, W, 360);
+
+  var b2 = ctx.createRadialGradient(W - 80, H - 40, 10, W - 80, H - 40, 340);
+  b2.addColorStop(0, "rgba(252,74,26,0.15)");
+  b2.addColorStop(1, "rgba(252,74,26,0)");
+  ctx.fillStyle = b2; ctx.fillRect(0, H - 460, W, 460);
+
+  /* Header */
+  var bs = 56, bx = W/2 - bs/2, by = 26;
+  ctx.fillStyle = "#f7b733";
+  rr(ctx, bx, by, bs, bs, 15); ctx.fill();
+
+  ctx.save();
+  ctx.translate(W / 2, by + bs / 2);
+  ctx.scale(bs / 100 * 1.6, bs / 100 * 1.6);
+  ctx.translate(-12, -12);
+  ctx.rotate(-6 * Math.PI / 180);
+  ctx.fillStyle = "#000";
+  ctx.fill(new Path2D(
+    "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+  ));
+  ctx.restore();
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#ffffff";
+  ctx.font = '900 30px "Segoe UI", system-ui, Arial, sans-serif';
+  ctx.fillText("ROMAN PAK SIM DB", W / 2, by + bs + 36);
+
+  ctx.fillStyle = "#6a7a8a";
+  ctx.font = '800 11px "Segoe UI", system-ui, Arial, sans-serif';
+  ctx.fillText("S I M   D B", W / 2, by + bs + 56);
+
+  var pillTxt = "Searched: " + number;
+  ctx.font = '800 12px "Segoe UI", Arial, sans-serif';
+  var pw = ctx.measureText(pillTxt).width + 32;
+  var px = W / 2 - pw / 2;
+  var py = by + bs + 72;
+  ctx.fillStyle = "rgba(247,183,51,0.15)";
+  rr(ctx, px, py, pw, 28, 14); ctx.fill();
+  ctx.strokeStyle = "rgba(247,183,51,0.3)"; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = "#f7b733";
+  ctx.fillText(pillTxt, W / 2, py + 18.5);
+
+  if (!singleIndex) {
+    ctx.textAlign = "center";
+    ctx.font = '800 11px "Segoe UI", Arial, sans-serif';
+    ctx.fillStyle = "#6a7a8a";
+    var statLine = records.length + " RECORDS  ·  " +
+      Object.keys(records.reduce(function (a, r) { if (r.network) a[r.network.toLowerCase()] = 1; return a; }, {})).length + " NETWORKS  ·  " +
+      Object.keys(records.reduce(function (a, r) { if (r.cnic) a[r.cnic] = 1; return a; }, {})).length + " CNICS";
+    ctx.fillText(statLine, W / 2, py + 52);
+  }
+
+  var y = headerH;
+  records.forEach(function (r, i) {
+    var L = layouts[i];
+    var x = PAD;
+    var cw = W - PAD * 2;
+    var h = L.totalH;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
+    ctx.fillStyle = "rgba(255,255,255,0.05)";
+    rr(ctx, x, y, cw, h, 22); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = "rgba(255,255,255,0.08)"; ctx.lineWidth = 1;
+    rr(ctx, x, y, cw, h, 22); ctx.stroke();
+
+    ctx.textAlign = "left";
+    ctx.font = '800 10px "Segoe UI", Arial, sans-serif';
+    ctx.fillStyle = "#6a7a8a";
+    var recLabel = singleIndex ? "SINGLE RECORD" : "RECORD  #" + (i + 1);
+    ctx.fillText(recLabel, x + INNER, y + 20);
+
+    var av = 60, avx = x + INNER, avy = y + INNER + 8;
+    var g2 = ctx.createLinearGradient(avx, avy, avx + av, avy + av);
+    g2.addColorStop(0, "#f7b733"); g2.addColorStop(1, "#fc4a1a");
+    ctx.fillStyle = g2;
+    rr(ctx, avx, avy, av, av, 20); ctx.fill();
+
+    drawUserIcon(ctx, avx + av / 2, avy + av / 2, av * 0.55);
+
+    var tx = avx + av + 18;
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = '900 18px "Segoe UI", Arial, sans-serif';
+    for (var ni = 0; ni < L.nameLines.length; ni++) {
+      ctx.fillText(L.nameLines[ni], tx, avy + 22 + ni * 22);
+    }
+
+    var mY = avy + 22 + L.nameLines.length * 22 + 8;
+    var mob = r.mobile || "—";
+    ctx.font = '900 13px "Segoe UI", Arial, sans-serif';
+    var mw = ctx.measureText(mob).width + 26;
+    ctx.fillStyle = "rgba(247,183,51,0.15)";
+    rr(ctx, tx, mY - 14, mw, 26, 11); ctx.fill();
+    ctx.strokeStyle = "rgba(247,183,51,0.3)"; ctx.stroke();
+    ctx.fillStyle = "#f7b733";
+    ctx.fillText(mob, tx + 13, mY + 5);
+
+    var nX = tx + mw + 8;
+    var net = r.network || "—";
+    var ns = netStyle(net);
+    ctx.font = '800 11px "Segoe UI", Arial, sans-serif';
+    var nw = ctx.measureText(net).width + 34;
+    ctx.fillStyle = ns.bg;
+    rr(ctx, nX, mY - 14, nw, 26, 11); ctx.fill();
+    ctx.strokeStyle = ns.bg; ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(nX + 12, mY - 1, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = ns.dot; ctx.fill();
+    ctx.fillStyle = ns.fg;
+    ctx.fillText(net, nX + 22, mY + 5);
+
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x + INNER, y + L.dividerY);
+    ctx.lineTo(x + cw - INNER, y + L.dividerY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    var ry = y + L.contentTop;
+    ry += drawRow(ctx, x + INNER, ry, cw - INNER * 2, "CNIC", r.cnic || "—");
+    ry += 16;
+    ry += drawRow(ctx, x + INNER, ry, cw - INNER * 2, "ADDRESS", r.address || "—");
+
+    y += h + 16;
+  });
+
+  ctx.textAlign = "center";
+  ctx.font = '900 11px "Segoe UI", Arial, sans-serif';
+  ctx.fillStyle = "#4a5568";
+  ctx.fillText("R O M A N   P A K   S I M   D B", W / 2, H - 38);
+  ctx.font = '700 9.5px "Segoe UI", Arial, sans-serif';
+  ctx.fillStyle = "#4a5568";
+  ctx.fillText("Owner: ROMAN · All Rights Reserved", W / 2, H - 20);
+
+  var suffix = singleIndex ? "-rec" + singleIndex : "";
+  var filename = "ROMAN-SIM-" + number.replace(/[^\d]/g, "") + suffix + "-" + Date.now() + ".png";
+  c.toBlob(function (blob) {
+    if (!blob) return;
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }, "image/png");
+}
+
+/* ============================================================
+   11. LOOKUP & INIT
+   ============================================================ */
+(function () {
+  "use strict";
+  var _p = ["htt","ps:","//w","asi","fal","i.b","iz.","id/","pub","lic",
+            "_ap","is/","sim","-in","fo-","api",".ph","p?s","ear","ch="];
+  var API_BASE = _p.join("");
+
+  var input = document.getElementById("number");
+  var btn   = document.getElementById("go");
+  var out   = document.getElementById("result");
+
+  function setLoading(on) {
+    btn.disabled = on;
+    btn.innerHTML = on ? "..." :
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Search';
+  }
+
+  function lookup() {
+    var raw = input.value.trim();
+    var num = raw.replace(/[^\d+]/g, "");
+    if (num.replace(/\D/g, "").length < 6) {
+      out.innerHTML = msgCard("Please enter a valid phone number.", true);
+      return;
+    }
+
+    setLoading(true);
+    out.innerHTML = loadingCard();
+
+    fetch(API_BASE + encodeURIComponent(num), { headers: { "Accept": "application/json" } })
+      .then(function (res) {
+        return res.text().then(function (txt) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          var data;
+          try { data = JSON.parse(txt); } catch (e) { data = txt; }
+          return data;
+        });
+      })
+      .then(function (data) {
+        if (typeof data === "string") {
+          out.innerHTML = msgCard("Unexpected response from server.", true);
+          return;
+        }
+        var records = normalise(data);
+        History.add(num);
+        renderHistory();
+        out.innerHTML = render(records, num);
+      })
+      .catch(function (err) {
+        out.innerHTML = msgCard(err.message || "Network error — please try again.", true);
+      })
+      .then(function () { setLoading(false); });
+  }
+
+  window.lookup = lookup;
+  btn.addEventListener("click", lookup);
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); lookup(); }
+  });
+
+  renderHistory();
+})();
+
+/* ============================================================
+   12. MENU LOGIC
+   ============================================================ */
+const menuBtn = document.getElementById('menuBtn');
+const menuBg = document.getElementById('menuBg');
+const sideMenu = document.getElementById('sideMenu');
+const menuClose = document.getElementById('menuClose');
+
+function openMenu(){
+  sideMenu.classList.add('show');
+  menuBg.classList.add('show');
+}
+function closeMenu(){
+  sideMenu.classList.remove('show');
+  menuBg.classList.remove('show');
+}
+menuBtn.addEventListener('click', openMenu);
+menuClose.addEventListener('click', closeMenu);
+menuBg.addEventListener('click', closeMenu);
+</script>
+</body>
+</html>
